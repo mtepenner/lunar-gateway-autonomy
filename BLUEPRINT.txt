@@ -1,0 +1,72 @@
+lunar-gateway-autonomy/
+│
+├── .github/                             # Automated CI/CD for edge deployments
+│   └── workflows/
+│       ├── build-edge-binaries.yml      # Compiles minimal Go binaries for ARM/x86 edge nodes
+│       └── build-ai-container.yml
+│
+├── station_simulator/                   # Python: The Mock Environment Generator
+│   ├── app/
+│   │   ├── sensors/
+│   │   │   ├── thermal.py               # Simulates extreme temperature swings (solar radiation/eclipse)
+│   │   │   └── power_bus.py             # Simulates battery voltage, solar array output, and loads
+│   │   ├── logistics/
+│   │   │   └── manifest_generator.py    # Generates messy, unstructured JSON/text cargo manifests
+│   │   └── main.py                      # Publishes simulated data over MQTT or UDP
+│   ├── requirements.txt
+│   └── Dockerfile                       # Only runs during local dev/testing
+│
+├── edge_controller/                     # Go: High-Reliability Control Loop & Ingestion
+│   ├── cmd/
+│   │   └── controller/
+│   │       └── main.go                  # Entry point for the edge daemon
+│   ├── internal/
+│   │   ├── ingestion/
+│   │   │   └── mqtt_client.go           # Subscribes to the raw station telemetry stream
+│   │   ├── power_management/
+│   │   │   └── battery_backup.go        # Hardcoded fail-safes (e.g., automated 120V/12V load shedding)
+│   │   ├── thermal_control/
+│   │   │   └── heaters.go               # Actuates physical relays based on AI triggers or threshold limits
+│   │   └── state_manager/
+│   │       └── sync.go                  # Buffers telemetry locally when disconnected from Earth
+│   ├── go.mod
+│   └── Dockerfile                       # Minimal scratch-based build for the edge module
+│
+├── ai_decision_engine/                  # Python + FastAPI: The Autonomous Brain
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── routes/
+│   │   │       ├── telemetry.py         # Endpoints for the Go controller to request complex decisions
+│   │   │       └── logistics.py         # Endpoints to process cargo and supply statuses
+│   │   ├── core/
+│   │   │   └── model_loader.py          # Loads lightweight ONNX or quantized ML models
+│   │   ├── models/
+│   │   │   ├── thermal_predictor.py     # Predicts when the station will freeze before it happens
+│   │   │   └── logistics_extractor.py   # AI pipeline that structures the messy shipping manifests
+│   │   └── main.py                      # FastAPI server running locally on the Gateway's internal network
+│   ├── requirements.txt
+│   └── Dockerfile
+│
+├── mission_control_ui/                  # React + TypeScript: The Decision Visualizer
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Station3D.tsx            # 3D model of the Gateway highlighting active modules/heaters
+│   │   │   ├── DecisionLog.tsx          # Real-time feed of *why* the AI made a specific choice
+│   │   │   ├── PowerGrid.tsx            # Flow diagram showing energy moving from arrays to batteries
+│   │   │   └── LogisticsTable.tsx       # Cleanly formatted table of extracted cargo data
+│   │   ├── hooks/
+│   │   │   └── useEdgeStream.ts         # Handles the WebSocket connection to the Gateway's data buffer
+│   │   ├── App.tsx
+│   │   └── index.tsx
+│   ├── package.json
+│   └── Dockerfile
+│
+├── k8s/                                 # K3s (Lightweight Kubernetes) manifests for Edge Deployment
+│   ├── edge-controller.yaml             # High-priority pod (never goes down)
+│   ├── ai-engine.yaml                   # Medium-priority pod (can restart without killing life support)
+│   ├── local-redis.yaml                 # Edge message broker and state cache
+│   └── ingress.yaml
+│
+├── docker-compose.yml                   # Bootstraps the Simulator, Go Edge, FastAPI Brain, and React UI
+├── Makefile                             # Build, test, and deploy shortcuts
+└── README.md
