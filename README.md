@@ -42,7 +42,7 @@ The system operates using a multi-service architecture deployed at the edge:
 ### Setup Steps
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/yourusername/lunar-gateway-autonomy.git](https://github.com/yourusername/lunar-gateway-autonomy.git)
+   git clone https://github.com/mtepenner/lunar-gateway-autonomy.git
    cd lunar-gateway-autonomy
    ```
 2. Build and launch the stack using Docker Compose, which bootstraps the Simulator, Go Edge, FastAPI Brain, and React UI:
