@@ -1,0 +1,29 @@
+name: Build AI Container
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'ai_decision_engine/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'ai_decision_engine/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build AI Engine container
+        uses: docker/build-push-action@v5
+        with:
+          context: ./ai_decision_engine
+          push: false
+          tags: lunar-gateway/ai-engine:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

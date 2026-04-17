@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edge-controller
+  labels:
+    app: edge-controller
+    tier: critical
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: edge-controller
+  template:
+    metadata:
+      labels:
+        app: edge-controller
+        tier: critical
+    spec:
+      priorityClassName: system-node-critical
+      containers:
+        - name: edge-controller
+          image: lunar-gateway/edge-controller:latest
+          env:
+            - name: MQTT_BROKER
+              value: "redis"
+            - name: MQTT_PORT
+              value: "1883"
+            - name: REDIS_ADDR
+              value: "redis:6379"
+            - name: AI_ENGINE_URL
+              value: "http://ai-engine:8000"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
+      restartPolicy: Always
